@@ -1,168 +1,95 @@
 # Student Progress Tracker
 
-This repository contains instructions and templates for creating a Google Sheets-based student progress tracking system. This system is designed for teachers who need to coordinate across different locations and maintain detailed logs of student interactions and progress.
+A comprehensive Google Sheets-based system for tracking student progress across multiple teachers, locations, and time periods. This tracker is designed for teachers who need to coordinate student interactions and maintain detailed logs without frequent in-person contact.
 
 ## Overview
 
-The tracker consists of several key components:
-1. **Main Dashboard** - Overview of all students with their current status
-2. **Entry Form** - For adding new interaction logs
-3. **Individual Student Tabs** - Detailed history for each student
-4. **Data Storage** - Backend sheet for storing all interactions
+The Student Progress Tracker consists of four main components:
 
-## Setup Instructions
+1. **Dashboard** - A central overview of all students with their current status, latest updates, and next steps
+2. **Entry Form** - A user-friendly interface for logging new student interactions
+3. **Individual Student Tabs** - Detailed history pages for each student showing all past interactions
+4. **Data Storage** - A backend sheet that stores all interaction data in a structured format
 
-### 1. Create a New Google Sheet
+This system allows you to:
+- Track interactions with students across multiple teachers
+- Document progress (or lack thereof) systematically
+- Maintain consistent status indicators
+- Link to student work
+- Review complete interaction history by student
+- Import historical data
 
-Start by creating a new Google Sheet with the following tabs:
-- Dashboard
-- Entry Form
-- Data Storage
-- Student tabs (one per student)
+## Getting Started
 
-### 2. Set Up the Data Storage Tab
+New to the Student Progress Tracker? Start here:
 
-This is where all entries will be stored.
+1. [Getting Started Guide](getting-started.md) - Create your tracker and import existing data
+2. [Dashboard Setup](dashboard-setup.md) - Set up your main overview page
+3. [Entry Form Setup](entry-form-setup.md) - Create the form for logging interactions
+4. [Data Storage Setup](data-storage-setup.md) - Configure the data storage backend
+5. [Student Tabs Setup](student-tabs-setup.md) - Create individual student history pages
 
-1. Create columns with the following headers:
-   - Timestamp
-   - Entry Date
-   - Teacher
-   - Student
-   - Status
-   - Update Notes
-   - Next Steps
+## Features
 
-![Data Storage Structure](images/data_storage.png)
+- **Simple Interface**: Designed to be used by teachers with varying technical skills
+- **Centralized History**: All student interactions stored in one place
+- **Real-time Updates**: Dashboard automatically displays the latest information
+- **Consistent Status Tracking**: Standardized status indicators for all students
+- **Historical Data Support**: Import previous interactions easily
+- **Minimal Navigation**: Log entries with just a few clicks
+- **Mobile-Friendly**: Works on phones and tablets for on-the-go updates
 
-### 3. Set Up the Entry Form
+## Status Indicators
 
-Create a user-friendly form for adding new entries:
+The system uses these standard status indicators to track student engagement:
 
-1. In the Entry Form tab, create a form-like layout:
-   ```
-   STUDENT INTERACTION LOG ENTRY
-   
-   Student: [Dropdown]
-   Date: [Today's date by default, editable]
-   Teacher: [Dropdown]
-   Current Status: [Dropdown]
-   Update/Notes: [Text area]
-   Next Steps: [Text area]
-   
-   [SUBMIT] button
-   ```
+- **Working Actively**: Student is engaged and making progress
+- **Needs Support**: Student is stuck or requires teacher intervention
+- **Disengaged-Passive**: Student is present but not working (e.g., browsing unrelated content)
+- **Disengaged-Refusing**: Student is actively refusing to participate
+- **Absent**: Student was not present for the scheduled interaction
+- **Imported/Historical**: For imported entries where status is unclear
 
-2. Set up data validation for dropdowns:
-   - Student: List of all student names
-   - Teacher: List of teacher names
-   - Status: Working Actively, Needs Support, Disengaged-Passive, Disengaged-Refusing, Absent, Imported/Historical
+## Customization Options
 
-3. Create a script button for submitting entries (details in the Implementation section)
+The tracker can be customized in several ways:
 
-![Entry Form](images/entry_form.png)
+- Add additional status options
+- Modify the dashboard layout to include different metrics
+- Create custom views and filters
+- Add automatic email notifications
+- Generate summary reports
+- Integrate with other Google Workspace apps
 
-### 4. Set Up the Dashboard
+## Technical Details
 
-Create a dashboard with columns:
-- Student Name
-- Project Focus/Topic
-- Link to Student Work
-- Current Status
-- Latest Update
-- Next Steps
-- Date of Last Entry
+The Student Progress Tracker uses:
+- Google Sheets as the database and interface
+- Google Apps Script for form submission and automation
+- QUERY formulas for data filtering and display
+- Data validation for consistent entry
+- Conditional formatting for visual cues
 
-Use formulas to pull the most recent information from the Data Storage tab.
+## Maintenance
 
-![Dashboard](images/dashboard.png)
+For ongoing maintenance:
+- Periodically archive older entries to maintain performance
+- Verify that all formulas are functioning correctly
+- Check that student information remains consistent across tabs
+- Back up your data regularly
 
-### 5. Individual Student Tabs
+## Troubleshooting
 
-For each student:
-1. Create a tab named with their full name
-2. Set up columns matching the log entry fields
-3. Use formulas to display all entries for that student in reverse chronological order
+Common issues and solutions:
+- Make sure sheet names exactly match those referenced in formulas
+- Verify that student names are consistent across all tabs
+- Check that date formats are consistent
+- If scripts stop working, check Google Apps Script permissions
 
-![Student Tab](images/student_tab.png)
+## Contributing
 
-## Implementation Details
+Have improvements or suggestions? Feel free to fork this repository and submit pull requests.
 
-### Dashboard Formulas
+## License
 
-For each student row on the dashboard, use these formulas to pull the latest information:
-
-1. **Current Status:**
-```
-=IFERROR(INDEX(FILTER('Data Storage'!E:E, 'Data Storage'!D:D=A2), 1), "No Status")
-```
-
-2. **Latest Update:**
-```
-=IFERROR(INDEX(FILTER('Data Storage'!F:F, 'Data Storage'!D:D=A2), 1), "No Updates")
-```
-
-3. **Next Steps:**
-```
-=IFERROR(INDEX(FILTER('Data Storage'!G:G, 'Data Storage'!D:D=A2), 1), "No Next Steps")
-```
-
-4. **Date of Last Entry:**
-```
-=IFERROR(INDEX(FILTER('Data Storage'!B:B, 'Data Storage'!D:D=A2), 1), "No Entries")
-```
-
-### Entry Form Submission (Google Apps Script)
-
-Create a button that runs this script when clicked:
-
-```javascript
-function submitEntry() {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet();
-  var formSheet = sheet.getSheetByName("Entry Form");
-  var dataSheet = sheet.getSheetByName("Data Storage");
-  
-  // Get values from form
-  var student = formSheet.getRange("B3").getValue();
-  var date = formSheet.getRange("B4").getValue();
-  var teacher = formSheet.getRange("B5").getValue();
-  var status = formSheet.getRange("B6").getValue();
-  var notes = formSheet.getRange("B7").getValue();
-  var nextSteps = formSheet.getRange("B8").getValue();
-  
-  // Add timestamp
-  var timestamp = new Date();
-  
-  // Append to Data Storage
-  dataSheet.appendRow([timestamp, date, teacher, student, status, notes, nextSteps]);
-  
-  // Clear form (optional)
-  formSheet.getRange("B7").setValue("");
-  formSheet.getRange("B8").setValue("");
-  
-  // Show confirmation
-  SpreadsheetApp.getUi().alert("Entry submitted successfully!");
-}
-```
-
-### Student Tab Formulas
-
-For each student tab, use this formula at the top of the log section to display all entries for that student in reverse chronological order:
-
-```
-=SORT(FILTER('Data Storage'!B:G, 'Data Storage'!D:D=SUBSTITUTE(CELL("filename", A1), "[", "")), 1, FALSE)
-```
-
-## Tips for Use
-
-1. **Adding Historical Entries:**
-   - Use the Entry Form but change the date field to the historical date
-   - For status, either leave blank or use "Imported/Historical"
-
-2. **Maintenance:**
-   - Periodically archive old entries to keep the sheet performing well
-   - Consider using Google Sheets' filter views for quick student filtering
-
-3. **Troubleshooting:**
-   - If formulas stop working, check that column references still match data storage
-   - If scripts stop working, check Google Apps Script permissions
+This project is available under the MIT License - feel free to use, modify, and distribute as needed for educational purposes.
